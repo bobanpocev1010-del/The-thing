@@ -1,0 +1,1036 @@
+local canSpawnBait = false
+local active = false
+local http_request = request or http_request or (http and http.request) or syn.request
+local rbxmSuite
+
+if http_request then
+local function GetRaw(url) return http_request({Url = url, Method = "GET"}).Body end
+rbxmSuite = loadstring(GetRaw("https://github.com/richie0866/rbxm---suite/releases/latest/download/rbxm-suite.lua"))()
+else
+print("sadly no")
+end
+---====== Load spawner ======---
+local Spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/DOORS-Entity-Spawner-V2/main/init.luau"))()
+function Notif(Message)
+	task.spawn(function()
+		local TweenService = game:GetService("TweenService")
+		local Players = game:GetService("Players")
+
+		local player = Players.LocalPlayer
+		local playerGui = player:WaitForChild("PlayerGui")
+
+		-- 1. Create the ScreenGui
+		local screenGui = Instance.new("ScreenGui")
+		screenGui.Name = "DoorsNotificationGui"
+		screenGui.ResetOnSpawn = false
+		screenGui.Parent = playerGui
+
+		-- 2. Create the TextLabel
+		local textLabel = Instance.new("TextLabel")
+		textLabel.Size = UDim2.new(0, 400, 0, 50)
+		textLabel.Position = UDim2.new(0.5, 0, 0.8, 0) -- Centered, above typical inventory spot
+		textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+		textLabel.BackgroundTransparency = 1
+		textLabel.Text = Message
+		textLabel.TextColor3 = Color3.fromRGB(255, 255, 207)
+		textLabel.Font = Enum.Font.Oswald
+		textLabel.TextSize = 30
+		textLabel.TextTransparency = 0 -- Start invisible for the fade-in
+		textLabel.Parent = screenGui
+
+		-- 3. Setup the Tween (Fade In)
+		local tweenInfo = TweenInfo.new(
+			5,                          -- Duration in seconds
+			Enum.EasingStyle.Quad,       -- Quad easing
+			Enum.EasingDirection.In      -- In direction
+		)
+
+		local fadeIn = TweenService:Create(textLabel, tweenInfo, {TextTransparency = 1})
+
+		-- 4. Play the effect
+		--	task.wait(2) -- Brief delay so you can see it start after loading
+		fadeIn:Play()
+	end)
+end
+---====== Create entity ======---
+function Ripper()
+	local entity = Spawner:Create({
+		Entity = {
+			Name = "Ripper",
+			Asset = "https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/eaeraera.rbxm",
+			HeightOffset = 0
+		},
+		Lights = {
+			Flicker = {
+				Enabled = true,
+				Duration = 1
+			},
+			Shatter = true,
+			Repair = false
+		},
+		Earthquake = {
+			Enabled = true
+		},
+		CameraShake = {
+			Enabled = true,
+			Range = 100,
+			Values = {1.5, 20, 0.1, 1} -- Magnitude, Roughness, FadeIn, FadeOut
+		},
+		Movement = {
+			Speed = 100,
+			Delay = 4,
+			Reversed = false
+		},
+		Rebounding = {
+			Enabled = false,
+			Type = "Ambush", 
+			Min = 1,
+			Max = 1,
+			Delay = 2
+		},
+		Damage = {
+			Enabled = true,
+			Range = 40,
+			Amount = 125
+		},
+		Crucifixion = {
+			Enabled = true,
+			Range = 40,
+			Resist = false,
+			Break = true
+		},
+		Death = {
+			Type = "Curious",
+			Hints = {"D", "e", "a", "d"},
+			Cause = "Ripper"
+		}
+	})
+
+	---====== Callbacks ======---
+	entity:SetCallback("OnSpawned", function()
+		local clr = Instance.new("ColorCorrectionEffect")
+		clr.Parent = game:GetService("Lighting")
+		clr.TintColor = Color3.new(1, 0.75, 0.75)
+
+		-- Note: Ensure this sound name exists in your model's SoundGroup
+		local model = entity.EntityModel
+		if model and model:FindFirstChild("Nightmare Yelling Bursts Of Distorted Scream (SFX)", true) then
+			model:FindFirstChild("Nightmare Yelling Bursts Of Distorted Scream (SFX)", true):Play()
+		end
+
+		local Smoke = Instance.new("ParticleEmitter")
+		local roof = Instance.new("Part")
+		roof.Size = Vector3.new(100,10,100)
+		roof.CFrame = game.Players.LocalPlayer.Character.CFrame * CFrame.new(0, 30, 0)
+		roof.Anchored = true
+		roof.Transparency = 1
+		roof.CanCollide = false
+		roof.Parent = workspace
+
+		game:GetService("TweenService"):Create(clr,TweenInfo.new(10,Enum.EasingStyle.Linear),{TintColor = Color3.new(1, 1, 1)}):Play()
+		for i,v in ipairs(workspace:GetDescendants()) do
+			if v:IsA("PointLight") then
+				local originalcolor = v.Color
+				v.Color = clr.TintColor
+				game:GetService("TweenService"):Create(v,TweenInfo.new(10,Enum.EasingStyle.Linear),{Color = Color3.new(1, 1, 1)}):Play()
+			end
+		end
+		task.spawn(function()
+			task.wait(5)
+			Smoke.Enabled = false
+			game.Debris:AddItem(Smoke, 5)
+			game.Debris:AddItem(roof, 5)
+			game.Debris:AddItem(clr, 5)
+		end)
+	end)
+
+	entity:Run(true)
+end
+function Depth()
+	local entity = Spawner:Create({
+		Entity = {
+			Name = "Depth",
+			Asset = "https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/124c12423532.rbxm",
+			HeightOffset = 0
+		},
+		Lights = {
+			Flicker = {
+				Enabled = true,
+				Duration = 3
+			},
+			Shatter = true,
+			Repair = false
+		},
+		Earthquake = {
+			Enabled = true
+		},
+		CameraShake = {
+			Enabled = true,
+			Range = 60,
+			Values = {1.5, 20, 0.1, 1} -- Magnitude, Roughness, FadeIn, FadeOut
+		},
+		Movement = {
+			Speed = 100,
+			Delay = 4,
+			Reversed = false
+		},
+		Rebounding = {
+			Enabled = false,
+			Type = "Ambush", 
+			Min = 1,
+			Max = 1,
+			Delay = 2
+		},
+		Damage = {
+			Enabled = true,
+			Range = 40,
+			Amount = 125
+		},
+		Crucifixion = {
+			Enabled = true,
+			Range = 40,
+			Resist = false,
+			Break = true
+		},
+		Death = {
+			Type = "Curious",
+			Hints = {"D", "e", "a", "d"},
+			Cause = "Depth was here - depth"
+		}
+	})
+
+	---====== Callbacks ======---
+	entity:SetCallback("OnSpawned", function()
+		local clr = Instance.new("ColorCorrectionEffect")
+		clr.Parent = game:GetService("Lighting")
+		clr.TintColor = Color3.new(1, 1, 1)
+
+		-- Note: Ensure this sound name exists in your model's SoundGroup
+		local model = entity.EntityModel
+		if model and model:FindFirstChild("Nightmare Yelling Bursts Of Distorted Scream (SFX)", true) then
+		--	model:FindFirstChild("Nightmare Yelling Bursts Of Distorted Scream (SFX)", true):Play()
+		end
+
+		local Smoke = Instance.new("ParticleEmitter")
+		local roof = Instance.new("Part")
+		roof.Size = Vector3.new(100,10,100)
+		roof.CFrame = game.Players.LocalPlayer.Character.CFrame * CFrame.new(0, 30, 0)
+		roof.Anchored = true
+		roof.Transparency = 1
+		roof.CanCollide = false
+		roof.Parent = workspace
+
+		game:GetService("TweenService"):Create(clr,TweenInfo.new(10,Enum.EasingStyle.Linear),{TintColor = Color3.new(1, 1, 1)}):Play()
+		for i,v in ipairs(workspace:GetDescendants()) do
+			if v:IsA("PointLight") then
+				local originalcolor = v.Color
+				v.Color = Color3.new(0, 1, 1)
+				game:GetService("TweenService"):Create(v,TweenInfo.new(10,Enum.EasingStyle.Linear),{Color = Color3.new(1, 1, 1)}):Play()
+			end
+		end
+		task.spawn(function()
+			task.wait(5)
+			Smoke.Enabled = false
+			game.Debris:AddItem(Smoke, 5)
+			game.Debris:AddItem(roof, 5)
+			game.Debris:AddItem(clr, 5)
+		end)
+	end)
+
+	entity:Run(true)
+end
+function Rebound()
+	local entity = Spawner:Create({
+		Entity = {
+			Name = "Rebound",
+			Asset = "https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/ea2222.rbxm",
+			HeightOffset = 0
+		},
+		Lights = {
+			Flicker = {
+				Enabled = false,
+				Duration = 1
+			},
+			Shatter = true,
+			Repair = false
+		},
+		Earthquake = {
+			Enabled = true
+		},
+		CameraShake = {
+			Enabled = true,
+			Range = 30,
+			Values = {1.5, 40, 0.1, 1} -- Magnitude, Roughness, FadeIn, FadeOut
+		},
+		Movement = {
+			Speed = 50,
+			Delay = 4,
+			Reversed = true
+		},
+		Rebounding = {
+			Enabled = false,
+			Type = "Ambush", 
+			Min = 1,
+			Max = 1,
+			Delay = 2
+		},
+		Damage = {
+			Enabled = true,
+			Range = 40,
+			Amount = 125
+		},
+		Crucifixion = {
+			Enabled = true,
+			Range = 40,
+			Resist = false,
+			Break = true
+		},
+		Death = {
+			Type = "Curious",
+			Hints = {"D", "e", "a", "d"},
+			Cause = "REBOUIND"
+		}
+	})
+
+	---====== Callbacks ======---
+	entity:SetCallback("OnSpawned", function()
+		if active == false then
+		--	active = true
+		local clr = Instance.new("ColorCorrectionEffect")
+		clr.Parent = game:GetService("Lighting")
+		clr.TintColor = Color3.new(0.75, 1, 1)
+
+		-- Note: Ensure this sound name exists in your model's SoundGroup
+		local model = entity.EntityModel
+		if model and model:FindFirstChild("rebound warning sound", true) then
+			model:FindFirstChild("rebound warning sound", true):Play()
+		end
+		local Smoke = Instance.new("ParticleEmitter")
+		local roof = Instance.new("Part")
+		roof.Size = Vector3.new(100,10,100)
+		roof.CFrame = game.Players.LocalPlayer.Character.CFrame * CFrame.new(0, 30, 0)
+		roof.Anchored = true
+		roof.Transparency = 1
+		roof.CanCollide = false
+		roof.Parent = workspace
+
+
+		game:GetService("TweenService"):Create(clr,TweenInfo.new(10,Enum.EasingStyle.Linear),{TintColor = Color3.new(1, 1, 1)}):Play()
+		for i,v in ipairs(workspace:GetDescendants()) do
+			if v:IsA("PointLight") then
+				local originalcolor = v.Color
+				v.Color = clr.TintColor
+				game:GetService("TweenService"):Create(v,TweenInfo.new(10,Enum.EasingStyle.Linear),{Color = Color3.new(1, 1, 1)}):Play()
+			end
+		end
+
+		task.spawn(function()
+			task.wait(5)
+			Smoke.Enabled = false
+			game.Debris:AddItem(Smoke, 5)
+			game.Debris:AddItem(roof, 5)
+			game.Debris:AddItem(clr, 5)
+		end)
+		end
+	end)
+	entity:SetCallback("OnDamagePlayer", function(newHealth: number)
+		if newHealth <= 0 then
+			print("Entity has killed the player")
+			Notif("You got killed huh? this is for debugging reasons btw")
+		else
+			print("Entity has damaged the player")
+		end
+	end)
+	entity:Run(true)
+end
+function A60()
+	local entity = Spawner:Create({
+		Entity = {
+			Name = "A-60",
+			Asset = "https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/A60PWNED.rbxm",
+			HeightOffset = 0
+		},
+		Lights = {
+			Flicker = {
+				Enabled = true,
+				Duration = 10
+			},
+			Shatter = true,
+			Repair = false
+		},
+		Earthquake = {
+			Enabled = true
+		},
+		CameraShake = {
+			Enabled = true,
+			Range = 60,
+			Values = {1.5, 40, 0.1, 1} -- Magnitude, Roughness, FadeIn, FadeOut
+		},
+		Movement = {
+			Speed = 160,
+			Delay = 4,
+			Reversed = true
+		},
+		Rebounding = {
+			Enabled = true,
+			Type = "Ambush", 
+			Min = 5,
+			Max = 6,
+			Delay = 2
+		},
+		Damage = {
+			Enabled = true,
+			Range = 40,
+			Amount = 60
+		},
+		Crucifixion = {
+			Enabled = true,
+			Range = 40,
+			Resist = true,
+			Break = true
+		},
+		Death = {
+			Type = "Curious",
+			Hints = {"D", "e", "a", "d"},
+			Cause = "..? I dont know actually"
+		}
+	})
+
+	---====== Callbacks ======---
+	entity:SetCallback("OnSpawned", function()
+		local clr = Instance.new("ColorCorrectionEffect")
+		clr.Parent = game:GetService("Lighting")
+		clr.TintColor = Color3.new(1, 0.5, 0.5)
+
+		-- Note: Ensure this sound name exists in your model's SoundGroup
+		local model = entity.EntityModel
+		if model and model:FindFirstChild("Static", true) then
+			model:FindFirstChild("Static", true):Play()
+		end
+		local Smoke = Instance.new("ParticleEmitter")
+		local roof = Instance.new("Part")
+		roof.Size = Vector3.new(100,10,100)
+		roof.CFrame = game.Players.LocalPlayer.Character.CFrame * CFrame.new(0, 30, 0)
+		roof.Anchored = true
+		roof.Transparency = 1
+		roof.CanCollide = false
+		roof.Parent = workspace
+
+
+		game:GetService("TweenService"):Create(clr,TweenInfo.new(10,Enum.EasingStyle.Linear),{TintColor = Color3.new(1, 1, 1)}):Play()
+		for i,v in ipairs(workspace:GetDescendants()) do
+			if v:IsA("PointLight") then
+				local originalcolor = v.Color
+				v.Color = Color3.new(1, 0, 0)
+				game:GetService("TweenService"):Create(v,TweenInfo.new(20,Enum.EasingStyle.Linear),{Color = Color3.new(1, 1, 1)}):Play()
+			end
+		end
+
+		task.spawn(function()
+			task.wait(5)
+			Smoke.Enabled = false
+			game.Debris:AddItem(Smoke, 5)
+			game.Debris:AddItem(roof, 5)
+			game.Debris:AddItem(clr, 15)
+		end)
+	end)
+
+	entity:Run(true)
+end
+function ITSCOMING()
+	local entity = Spawner:Create({
+		Entity = {
+			Name = "Deer god",
+			Asset = "https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/NoEscape.rbxm",
+			HeightOffset = 0
+		},
+		Lights = {
+			Flicker = {
+				Enabled = true,
+				Duration = 4
+			},
+			Shatter = false,
+			Repair = false
+		},
+		Earthquake = {
+			Enabled = false
+		},
+		CameraShake = {
+			Enabled = true,
+			Range = 20,
+			Values = {1.5, 40, 0.1, 1} -- Magnitude, Roughness, FadeIn, FadeOut
+		},
+		Movement = {
+			Speed = 30,
+			Delay = 1,
+			Reversed = false
+		},
+		Rebounding = {
+			Enabled = false,
+			Type = "Ambush", 
+			Min = 5,
+			Max = 6,
+			Delay = 2
+		},
+		Damage = {
+			Enabled = true,
+			Range = 40,
+			Amount = 100
+		},
+		Crucifixion = {
+			Enabled = true,
+			Range = 40,
+			Resist = true,
+			Break = true
+		},
+		Death = {
+			Type = "Curious",
+			Hints = {"D", "e", "a", "d"},
+			Cause = "Specimen 8"
+		}
+	})
+
+	---====== Callbacks ======---
+	entity:SetCallback("OnDamagePlayer", function(newHealth: number)
+		if newHealth <= 0 then
+			print("Entity has killed the player")
+			Notif("... Whaat is thisss????")
+			local model = entity.EntityModel
+			if model then
+				if model.SoundGroup:FindFirstChild("GG") then
+					model.SoundGroup:FindFirstChild("GG"):Play()
+					local screengui = model.dang
+					screengui.yes.Enabled = false
+task.wait(1)
+screengui.DisplayOrder = 9999999999999
+screengui.Parent = game.Players.LocalPlayer.PlayerGui
+screengui.yes.Enabled = true
+				end
+			end
+		else
+			print("Entity has damaged the player")
+		end
+	end)
+	entity:SetCallback("OnSpawned", function()
+		local clr = Instance.new("ColorCorrectionEffect")
+		clr.Parent = game:GetService("Lighting")
+		clr.TintColor = Color3.new(1, 0.5, 0.5)
+
+		-- Note: Ensure this sound name exists in your model's SoundGroup
+		local model = entity.EntityModel
+		if model.SoundGroup and model.SoundGroup:FindFirstChild("Join Us.", true) then
+			model:FindFirstChild("Join Us.", true):Play()
+		end
+		task.spawn(function()
+			task.wait(10)
+			if model.SoundGroup and model.SoundGroup:FindFirstChild("Dont run.", true) then
+				model:FindFirstChild("Dont run.", true):Play()
+			end
+		end)
+		local Smoke = Instance.new("ParticleEmitter")
+		local roof = Instance.new("Part")
+		roof.Size = Vector3.new(100,10,100)
+		roof.CFrame = game.Players.LocalPlayer.Character.CFrame * CFrame.new(0, 30, 0)
+		roof.Anchored = true
+		roof.Transparency = 1
+		roof.CanCollide = false
+		roof.Parent = workspace
+
+
+		game:GetService("TweenService"):Create(clr,TweenInfo.new(10,Enum.EasingStyle.Linear),{TintColor = Color3.new(1, 1, 1)}):Play()
+		for i,v in ipairs(workspace:GetDescendants()) do
+			if v:IsA("PointLight") then
+				local originalcolor = v.Color
+				v.Color = Color3.new(1, 0, 0)
+				game:GetService("TweenService"):Create(v,TweenInfo.new(20,Enum.EasingStyle.Linear),{Color = Color3.new(1, 1, 1)}):Play()
+			end
+		end
+
+		task.spawn(function()
+			task.wait(5)
+			Smoke.Enabled = false
+			game.Debris:AddItem(Smoke, 5)
+			game.Debris:AddItem(roof, 5)
+			game.Debris:AddItem(clr, 15)
+		end)
+	end)
+
+	entity:Run(true)
+end
+--https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/NoEscape.rbxm
+---====== Wait for Game Start Logic ======---
+local function SpawnStaticMinefield(room,model)
+	local floor = room:FindFirstChild("Floor") or room.PrimaryPart
+	if not floor then return end
+
+	local amountToSpawn = 8
+
+	for i = 1, amountToSpawn do
+		local clone = model:Clone()
+		clone.Parent = workspace
+
+		-- Pick variant and setup
+		local variants = clone.Variants:GetChildren()
+		local chosen = variants[math.random(1, #variants)]
+		for _, v in pairs(variants) do 
+			if v ~= chosen then v:Destroy() else v.Transparency = 1 end 
+		end
+
+		-- Random Position Logic
+		local rx = math.random(-floor.Size.X/2.5, floor.Size.X/2.5)
+		local rz = math.random(-floor.Size.Z/2.5, floor.Size.Z/2.5)
+		local startPos = floor.Position + Vector3.new(rx, 10, rz)
+
+		local params = RaycastParams.new()
+		params.FilterDescendantsInstances = {room}
+		params.FilterType = Enum.RaycastFilterType.Include
+
+		local result = workspace:Raycast(startPos, Vector3.new(0, -20, 0), params)
+
+		if result then
+			clone:SetPrimaryPartCFrame(CFrame.new(result.Position + Vector3.new(0, 0.05, 0)))
+
+			-- Smooth Fade-In (The "Glitch" appearing)
+			task.spawn(function()
+				for i = 1, 10 do
+					chosen.Transparency = 1 - (i/12)
+					task.wait(0.05)
+				end
+				chosen.Transparency = 0.3
+			end)
+
+			-- Damage Connection
+			local touched = false
+			chosen.Touched:Connect(function(hit)
+				local hum = hit.Parent:FindFirstChild("Humanoid")
+				if hum and not touched then
+					touched = true
+					hum:TakeDamage(15) -- Static hurts!
+					task.wait(0.8) -- Grace period so they don't insta-die
+					touched = false
+				end
+			end)
+		else
+			clone:Destroy()
+		end
+	end
+end
+local function SpawnSilence()
+	local http_request = request or http_request or (http and http.request) or syn.request
+	local function GetRaw(url) return http_request({Url = url, Method = "GET"}).Body end
+	--local rbxmSuite = loadstring(GetRaw("https://github.com/richie0866/rbxm-suite/releases/latest/download/rbxm-suite.lua"))()
+
+	local success, Model = pcall(function() 
+		return rbxmSuite.launch(GetRaw("https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/tete.rbxm")) 
+	end)
+
+	if not success or not Model then return end
+
+	local clone = Model
+	clone.Parent = workspace
+
+	local latestRoom = game.ReplicatedStorage.GameData.LatestRoom.Value
+	local currentRoom = workspace.CurrentRooms:FindFirstChild(tostring(latestRoom))
+
+	if currentRoom then
+		local roomStart = currentRoom:FindFirstChild("RoomStart") or currentRoom.PrimaryPart
+		if roomStart then
+			clone:PivotTo(roomStart.CFrame * CFrame.new(0, 8, -20))
+		end
+	end
+
+	local rushNew = clone:WaitForChild("RushNew")
+	local attachment = rushNew:WaitForChild("Attachment")
+	local faceParticle = attachment:WaitForChild("ParticleEmitter")
+
+	local sounds = {}
+	for _, child in pairs(rushNew:GetChildren()) do
+		if child:IsA("Sound") then
+			child.Looped = true
+			-- We DON'T set the speed here; we keep whatever was in the .rbxm
+			child:Play()
+			table.insert(sounds, child)
+		end
+	end
+
+	local player = game.Players.LocalPlayer
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
+
+	local ChangedAlready = false
+
+	local connection
+	connection = game:GetService("RunService").Heartbeat:Connect(function(dt)
+		if not clone or not clone.Parent then 
+			connection:Disconnect() 
+			return 
+		end
+
+		local isMoving = humanoid.MoveDirection.Magnitude > 0
+		local isCrouching = player:GetAttribute("Crouching") or humanoid.HipHeight < 2
+
+		if isMoving and not isCrouching then
+			-- ANGRY: Take damage and brighten/redden the face
+			humanoid:TakeDamage(12 * dt) 
+			faceParticle.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
+
+			-- Logic: Only increment if we haven't shifted yet
+			if not ChangedAlready then
+				for _, s in pairs(sounds) do
+					s.PlaybackSpeed += 0.2 -- Shifts the whole mix up
+				end
+				ChangedAlready = true
+			end
+		else
+			-- CALM: Normal face
+			faceParticle.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+
+			-- Logic: Return to base (which is 0.3 lower than the start)
+			if ChangedAlready then
+				for _, s in pairs(sounds) do
+					s.PlaybackSpeed -= 0.2 -- Shifts the whole mix way down
+				end
+				ChangedAlready = false
+			end
+		end
+	end)
+
+	-- Room Cleanup
+	local roomValue = game.ReplicatedStorage.GameData.LatestRoom
+	local cleanup
+	cleanup = roomValue:GetPropertyChangedSignal("Value"):Connect(function()
+		if clone then clone:Destroy() end
+		if connection then connection:Disconnect() end
+		cleanup:Disconnect()
+	end)
+end
+function FAKEBAITER()
+	local http_request = request or http_request or (http and http.request) or syn.request
+	local function GetRaw(url) return http_request({Url = url, Method = "GET"}).Body end
+
+	local success, baitModel = pcall(function() 
+		return rbxmSuite.launch(GetRaw("https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/HahaUGotBaitedLLLL.rbxm")) 
+	end)
+
+	if success and baitModel then
+		local TweenService = game:GetService("TweenService")
+		local player = game.Players.LocalPlayer
+		local char = player.Character or player.CharacterAdded:Wait()
+		local hum = char:WaitForChild("Humanoid")
+		local root = char:WaitForChild("HumanoidRootPart")
+		local animator = hum:WaitForChild("Animator")
+
+		local function SetupBaitCloset(wardrobe)
+			local promptPart = wardrobe:WaitForChild("Prompt")
+			local proximityPrompt = promptPart:WaitForChild("ProximityPrompt")
+			local entityThing = wardrobe:WaitForChild("this entity thing")
+			local hidePos = wardrobe:WaitForChild("HidePosition") 
+			local redLight = entityThing:FindFirstChild("PointLight")
+
+			local modelAnimController = wardrobe:WaitForChild("AnimationController")
+			local modelForceOut = modelAnimController:LoadAnimation(wardrobe:WaitForChild("Anim_ForceOutModel"))
+			local playerForceOut = animator:LoadAnimation(wardrobe:WaitForChild("Anim_ForceOut"))
+
+			proximityPrompt.Triggered:Connect(function()
+				proximityPrompt.Enabled = false
+				root.Anchored = true
+
+				-- The Grab
+				TweenService:Create(root, TweenInfo.new(0.3), {CFrame = hidePos.CFrame}):Play()
+
+				playerForceOut:Play()
+				modelForceOut:Play()
+				if redLight then redLight.Brightness = 5 end
+
+				task.delay(2.5, function()
+					hum:TakeDamage(50)
+					for i = 1, 10 do
+						hum.CameraOffset = Vector3.new(math.random(-1,1), math.random(-1,1), 0)
+						task.wait(0.05)
+					end
+					hum.CameraOffset = Vector3.new(0,0,0)
+				end)
+
+				task.wait(5)
+
+				playerForceOut:Stop()
+				modelForceOut:Stop()
+
+				root.Anchored = false
+				-- Push them back relative to where the closet is facing
+				root.AssemblyLinearVelocity = (promptPart.CFrame.LookVector * 50) + Vector3.new(0, 30, 0)
+
+				entityThing:Destroy()
+				for _, p in pairs(wardrobe:GetDescendants()) do
+					if p:IsA("BasePart") then
+						p.Color = Color3.fromRGB(10, 10, 10)
+						p.Material = Enum.Material.CorrodedMetal
+					end
+				end
+			end)
+		end
+
+		-- 2. REPLACE THE FIRST CLOSET
+		local latestRoom = workspace.CurrentRooms:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value)
+		if latestRoom then
+			-- Duplicate check: Don't replace if we've already done it in this room
+			if not latestRoom:FindFirstChild("OhioBaitCloset") then
+				local firstCloset = nil
+
+				-- Scan for the first model named Wardrobe
+				for _, desc in pairs(latestRoom:GetDescendants()) do
+					if desc.Name == "Wardrobe" and desc:IsA("Model") then
+						firstCloset = desc
+						break -- Stop at the first one found
+					end
+				end
+
+				if firstCloset then
+					local targetCFrame = firstCloset:GetPivot()
+
+					-- Spawn Bait
+					local newBait = baitModel:Clone()
+					newBait.Name = "OhioBaitCloset"
+					newBait.Parent = latestRoom
+					newBait:PivotTo(targetCFrame)
+
+					-- Delete the real one
+					firstCloset:Destroy()
+
+					SetupBaitCloset(newBait)
+				end
+			end
+		end
+	end
+end
+local function startLoop()
+	print("First door opened! Starting entity loops...")
+
+	-- Loop for Ripper (Every 100 seconds)
+	task.spawn(function()
+		while true do
+			task.wait(90)
+			canSpawnBait = true -- Signal that we are ready to bait the next room
+		end
+	end)
+	task.spawn(function()
+		while true do
+			task.wait(100)
+			Ripper()
+		end
+	end)
+	task.spawn(function()
+		while true do
+			task.wait(333)
+			A60()
+		end
+	end)
+	task.spawn(function()
+		while true do
+			task.wait(500)
+			ITSCOMING()
+		end
+	end)
+	task.spawn(function()
+		while true do
+			task.wait(170)
+			SpawnSilence()
+		end
+	end)
+	task.spawn(function()
+		while true do
+			task.wait(200)
+			Depth()
+		end
+	end)
+	-- Loop for Rebound (Every 150 seconds)
+	local roomsChangedSinceLastRebound = 0
+
+	-- This connection stays active the whole game
+	game:GetService("ReplicatedStorage").GameData.LatestRoom.Changed:Connect(function()
+		if active then
+			roomsChangedSinceLastRebound += 1
+
+			if roomsChangedSinceLastRebound < 3 then 
+				-- It hasn't finished its 3-room cycle yet, so make it rebound
+				--task.wait(2) -- Short delay before it comes back
+				Rebound()
+			else
+				-- Cycle finished
+				active = false
+				roomsChangedSinceLastRebound = 0
+			end
+		end
+	end)
+	task.spawn(function()
+		while true do
+			task.wait(150)
+			if not active then
+				active = true
+				roomsChangedSinceLastRebound = 0
+				Rebound() -- The first attack
+			end
+		end
+	end)
+	task.spawn(function()
+		while true do
+			task.wait(60)
+			local http_request = request or http_request or (http and http.request) or syn.request
+			local function GetRaw(url) return http_request({Url = url, Method = "GET"}).Body end
+			--local rbxmSuite = loadstring(GetRaw("https://github.com/richie0866/rbxm-suite/releases/latest/download/rbxm-suite.lua"))()
+
+			local success, model = pcall(function() 
+				return rbxmSuite.launch(GetRaw("https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/tete.rbxm")) 
+			end)
+
+			if success then
+				local clone = model
+				clone.Parent = workspace
+				local prim = clone:WaitForChild("Look.")
+				clone.PrimaryPart = prim
+
+				-- 1. Find the middle of the room
+				-- Assumes 'currentRoom' is defined by your floor generation system
+				local currentRoom = workspace.CurrentRooms[tostring(game.ReplicatedStorage.GameData.LatestRoom.Value)]
+				local roomCenter = currentRoom:FindFirstChild("RoomStart") or currentRoom.PrimaryPart
+
+			if roomCenter then
+					clone:PivotTo(roomCenter.CFrame * CFrame.new(0, 2, -15)) -- Teleport to center, slightly raised
+			end
+				prim.Attachment.eye.Enabled = false
+				task.wait(1)
+				local attachment = clone["Look."]:FindFirstChild("Attachment")
+				if attachment then
+					local eyeParticle = attachment:FindFirstChild("eye")
+					if eyeParticle then
+						eyeParticle.Enabled = true -- The eye "opens"
+					end
+
+					-- Optional: Enable all other particles in the attachment for a full effect
+					for _, v in pairs(attachment:GetChildren()) do
+						if v:IsA("ParticleEmitter") then
+							v.Enabled = true
+						end
+					end
+				end
+				-- 2. Damage Logic
+				local player = game.Players.LocalPlayer
+				local character = player.Character or player.CharacterAdded:Wait()
+				local humanoid = character:WaitForChild("Humanoid")
+				local camera = workspace.CurrentCamera
+
+				local connection
+				connection = game:GetService("RunService").Heartbeat:Connect(function(dt)
+					if not clone or not clone.Parent then connection:Disconnect() return end
+
+					-- Calculate if player is looking at the entity
+					local directionToEntity = (clone.PrimaryPart.Position - camera.CFrame.Position).Unit
+					local lookDirection = camera.CFrame.LookVector
+					local dotProduct = directionToEntity:Dot(lookDirection)
+
+					-- If dotProduct is > 0.7, they are looking roughly at it. 
+					-- If < 0.7, they aren't looking, so deal damage.
+					if dotProduct < 0.7 then
+						humanoid:TakeDamage(30 * dt)
+					end
+				end)
+
+				-- 3. Despawn Logic
+				-- Listens for the 'LatestRoom' value to change (indicating the next door opened)
+				local roomValue = game.ReplicatedStorage.GameData.LatestRoom
+				local cleanup
+				cleanup = roomValue:GetPropertyChangedSignal("Value"):Connect(function()
+					if clone then
+						clone:Destroy()
+					end
+					if connection then
+						connection:Disconnect()
+					end
+					cleanup:Disconnect()
+				end)
+			end
+		end
+	end)
+	task.spawn(function()
+		local ReplicatedStorage = game:GetService("ReplicatedStorage")
+		local CurrentRooms = workspace:WaitForChild("CurrentRooms")
+
+		-- This is the standard Doors variable for the latest room number
+		local latestRoomValue = ReplicatedStorage:WaitForChild("GameData"):WaitForChild("LatestRoom")
+
+		-- Function to handle the spawning logic
+
+		while task.wait(120) do
+			local http_request = request or http_request or (http and http.request) or syn.request
+			local function GetRaw(url) return http_request({Url = url, Method = "GET"}).Body end
+			
+			local success, model = pcall(function() 
+				return rbxmSuite.launch(GetRaw("https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/bebe.rbxm")) 
+			end)
+
+			if success then
+				local function onRoomChanged()
+					local roomNumber = tostring(latestRoomValue.Value)
+					local roomModel = CurrentRooms:FindFirstChild(roomNumber)
+
+					if roomModel then
+						-- Wait a split second for the room to fully load/animate in
+						task.wait(0.5) 
+
+						-- Call your function!
+						SpawnStaticMinefield(roomModel,model)
+						print("Spawned Static in Room: " .. roomNumber)
+					end
+				end
+				onRoomChanged()
+			end
+		end
+	end)
+end
+function elgolf(itemname)
+    -- Create the tool first
+    local tool = Instance.new("Tool")
+    tool.Name = itemname
+    tool.RequiresHandle = false -- Set to false if you don't have a Part named "Handle" inside
+    
+    -- Parent it last
+    tool.Parent = game.Players.LocalPlayer:WaitForChild("Backpack")
+    return tool
+end
+
+local bluddd = elgolf("debug deergod")
+
+bluddd.Activated:Connect(function()
+    ITSCOMING()
+end)
+-- This detects when Room 1 is generated/loaded (meaning Door 0 was opened)
+Notif("The script was loaded successfully.")
+-- 2. The Room Observer (Waits for the door to open)
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Connect(function()
+	-- Only run if the 90-second timer has finished
+	if canSpawnBait then
+		-- Small delay to let the room parts load in before we swap them
+		task.wait(1.5) 
+
+		-- Call your function
+		FAKEBAITER()
+
+		-- Reset the timer flag
+		canSpawnBait = false
+		print("The OhioTwo Mimic has successfully replaced a closet in Room " .. game.ReplicatedStorage.GameData.LatestRoom.Value)
+	end
+end)
+local connection
+connection = game:GetService("ReplicatedStorage").GameData.LatestRoom.Changed:Connect(function(roomValue)
+	if roomValue >= 1 then
+		connection:Disconnect() -- Stop listening once triggered
+		Notif("Script loaded, Made by @The_ohiotwo (Scripter and modeller)"
+
+		)
+		task.spawn(function()
+			task.wait(5)
+			Notif("Credits to Custom Entity Spawner V2 for some entities.")
+		end)
+		startLoop()
+	end
+end)
