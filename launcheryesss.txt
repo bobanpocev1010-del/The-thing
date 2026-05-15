@@ -1,9 +1,9 @@
 local canSpawnBait = false
 local active = false
-local http_request = request or http_request or (http and http.request) or syn.request
-local rbxmSuite
+local http_request = false --request or http_request or (http and http.request) or syn.request
+local rbxmSuite = nil 
 
-if http_request then
+if http_request == true then
 	local function GetRaw(url) return http_request({Url = url, Method = "GET"}).Body end
 	rbxmSuite = loadstring(GetRaw("https://github.com/richie0866/rbxm---suite/releases/latest/download/rbxm-suite.lua"))()
 else
