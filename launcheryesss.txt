@@ -4,10 +4,10 @@ local http_request = request or http_request or (http and http.request) or syn.r
 local rbxmSuite
 
 if http_request then
-local function GetRaw(url) return http_request({Url = url, Method = "GET"}).Body end
-rbxmSuite = loadstring(GetRaw("https://github.com/richie0866/rbxm---suite/releases/latest/download/rbxm-suite.lua"))()
+	local function GetRaw(url) return http_request({Url = url, Method = "GET"}).Body end
+	rbxmSuite = loadstring(GetRaw("https://github.com/richie0866/rbxm---suite/releases/latest/download/rbxm-suite.lua"))()
 else
-print("sadly no")
+	print("sadly no")
 end
 ---====== Load spawner ======---
 local Spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/DOORS-Entity-Spawner-V2/main/init.luau"))()
@@ -208,7 +208,7 @@ function Depth()
 		-- Note: Ensure this sound name exists in your model's SoundGroup
 		local model = entity.EntityModel
 		if model and model:FindFirstChild("Nightmare Yelling Bursts Of Distorted Scream (SFX)", true) then
-		--	model:FindFirstChild("Nightmare Yelling Bursts Of Distorted Scream (SFX)", true):Play()
+			--	model:FindFirstChild("Nightmare Yelling Bursts Of Distorted Scream (SFX)", true):Play()
 		end
 
 		local Smoke = Instance.new("ParticleEmitter")
@@ -295,42 +295,42 @@ function Rebound()
 	---====== Callbacks ======---
 	entity:SetCallback("OnSpawned", function()
 		if active == false then
-		--	active = true
-		local clr = Instance.new("ColorCorrectionEffect")
-		clr.Parent = game:GetService("Lighting")
-		clr.TintColor = Color3.new(0.75, 1, 1)
+			--	active = true
+			local clr = Instance.new("ColorCorrectionEffect")
+			clr.Parent = game:GetService("Lighting")
+			clr.TintColor = Color3.new(0.75, 1, 1)
 
-		-- Note: Ensure this sound name exists in your model's SoundGroup
-		local model = entity.EntityModel
-		if model and model:FindFirstChild("rebound warning sound", true) then
-			model:FindFirstChild("rebound warning sound", true):Play()
-		end
-		local Smoke = Instance.new("ParticleEmitter")
-		local roof = Instance.new("Part")
-		roof.Size = Vector3.new(100,10,100)
-		roof.CFrame = game.Players.LocalPlayer.Character.CFrame * CFrame.new(0, 30, 0)
-		roof.Anchored = true
-		roof.Transparency = 1
-		roof.CanCollide = false
-		roof.Parent = workspace
-
-
-		game:GetService("TweenService"):Create(clr,TweenInfo.new(10,Enum.EasingStyle.Linear),{TintColor = Color3.new(1, 1, 1)}):Play()
-		for i,v in ipairs(workspace:GetDescendants()) do
-			if v:IsA("PointLight") then
-				local originalcolor = v.Color
-				v.Color = clr.TintColor
-				game:GetService("TweenService"):Create(v,TweenInfo.new(10,Enum.EasingStyle.Linear),{Color = Color3.new(1, 1, 1)}):Play()
+			-- Note: Ensure this sound name exists in your model's SoundGroup
+			local model = entity.EntityModel
+			if model and model:FindFirstChild("rebound warning sound", true) then
+				model:FindFirstChild("rebound warning sound", true):Play()
 			end
-		end
+			local Smoke = Instance.new("ParticleEmitter")
+			local roof = Instance.new("Part")
+			roof.Size = Vector3.new(100,10,100)
+			roof.CFrame = game.Players.LocalPlayer.Character.CFrame * CFrame.new(0, 30, 0)
+			roof.Anchored = true
+			roof.Transparency = 1
+			roof.CanCollide = false
+			roof.Parent = workspace
 
-		task.spawn(function()
-			task.wait(5)
-			Smoke.Enabled = false
-			game.Debris:AddItem(Smoke, 5)
-			game.Debris:AddItem(roof, 5)
-			game.Debris:AddItem(clr, 5)
-		end)
+
+			game:GetService("TweenService"):Create(clr,TweenInfo.new(10,Enum.EasingStyle.Linear),{TintColor = Color3.new(1, 1, 1)}):Play()
+			for i,v in ipairs(workspace:GetDescendants()) do
+				if v:IsA("PointLight") then
+					local originalcolor = v.Color
+					v.Color = clr.TintColor
+					game:GetService("TweenService"):Create(v,TweenInfo.new(10,Enum.EasingStyle.Linear),{Color = Color3.new(1, 1, 1)}):Play()
+				end
+			end
+
+			task.spawn(function()
+				task.wait(5)
+				Smoke.Enabled = false
+				game.Debris:AddItem(Smoke, 5)
+				game.Debris:AddItem(roof, 5)
+				game.Debris:AddItem(clr, 5)
+			end)
 		end
 	end)
 	entity:SetCallback("OnDamagePlayer", function(newHealth: number)
@@ -501,10 +501,10 @@ function ITSCOMING()
 					model.SoundGroup:FindFirstChild("GG"):Play()
 					local screengui = model.dang
 					screengui.yes.Enabled = false
-task.wait(1)
-screengui.DisplayOrder = 9999999999999
-screengui.Parent = game.Players.LocalPlayer.PlayerGui
-screengui.yes.Enabled = true
+					task.wait(1)
+					screengui.DisplayOrder = 9999999999999
+					screengui.Parent = game.Players.LocalPlayer.PlayerGui
+					screengui.yes.Enabled = true
 				end
 			end
 		else
@@ -875,79 +875,83 @@ local function startLoop()
 	task.spawn(function()
 		while true do
 			task.wait(60)
-			local http_request = request or http_request or (http and http.request) or syn.request
-			local function GetRaw(url) return http_request({Url = url, Method = "GET"}).Body end
-			--local rbxmSuite = loadstring(GetRaw("https://github.com/richie0866/rbxm-suite/releases/latest/download/rbxm-suite.lua"))()
+			-- 1. Setup the Parser and HTTP Request
+			local http_request = request or http_request or (http and http.request) or (syn and syn.request)
+			local RbxmxParser = loadstring(game:HttpGet("https://raw.githubusercontent.com/The-Gamer-101/RbxmxParser/main/Parser.lua"))()
 
-			local success, model = pcall(function() 
-				return rbxmSuite.launch(GetRaw("https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/tete.rbxm")) 
+			local function GetRaw(url) 
+				return http_request({Url = url, Method = "GET"}).Body 
+			end
+
+			-- 2. Fetch and Parse the .rbxmx model
+			local success, model = pcall(function()
+				local rawXml = GetRaw("https://raw.githubusercontent.com/bobanpocev1010-del/The-thing/refs/heads/main/what%20is%20xml%20bro.rbxmx")
+				return RbxmxParser:Parse(rawXml)
 			end)
 
-			if success then
+			if success and model then
 				local clone = model
 				clone.Parent = workspace
+
 				local prim = clone:WaitForChild("Look.")
 				clone.PrimaryPart = prim
 
-				-- 1. Find the middle of the room
-				-- Assumes 'currentRoom' is defined by your floor generation system
-				local currentRoom = workspace.CurrentRooms[tostring(game.ReplicatedStorage.GameData.LatestRoom.Value)]
-				local roomCenter = currentRoom:FindFirstChild("RoomStart") or currentRoom.PrimaryPart
+				-- 3. Positioning Logic: Spawn in front of the player
+				local player = game.Players.LocalPlayer
+				local character = player.Character or player.CharacterAdded:Wait()
+				local rootPart = character:WaitForChild("HumanoidRootPart")
 
-			if roomCenter then
-					clone:PivotTo(roomCenter.CFrame * CFrame.new(0, 2, -15)) -- Teleport to center, slightly raised
-			end
-				prim.Attachment.eye.Enabled = false
+				-- This moves the model 10 studs in front of the player and 2 studs up
+				local spawnOffset = CFrame.new(0, 2, -10) 
+				clone:PivotTo(rootPart.CFrame * spawnOffset)
+
+				-- 4. Visual Effects (The Eye)
+				if prim:FindFirstChild("Attachment") and prim.Attachment:FindFirstChild("eye") then
+					prim.Attachment.eye.Enabled = false
+				end
+
 				task.wait(1)
-				local attachment = clone["Look."]:FindFirstChild("Attachment")
-				if attachment then
-					local eyeParticle = attachment:FindFirstChild("eye")
-					if eyeParticle then
-						eyeParticle.Enabled = true -- The eye "opens"
-					end
 
-					-- Optional: Enable all other particles in the attachment for a full effect
+				local attachment = prim:FindFirstChild("Attachment")
+				if attachment then
 					for _, v in pairs(attachment:GetChildren()) do
 						if v:IsA("ParticleEmitter") then
 							v.Enabled = true
 						end
 					end
 				end
-				-- 2. Damage Logic
-				local player = game.Players.LocalPlayer
-				local character = player.Character or player.CharacterAdded:Wait()
+
+				-- 5. Damage Logic (Stare Mechanic)
 				local humanoid = character:WaitForChild("Humanoid")
 				local camera = workspace.CurrentCamera
 
 				local connection
 				connection = game:GetService("RunService").Heartbeat:Connect(function(dt)
-					if not clone or not clone.Parent then connection:Disconnect() return end
+					if not clone or not clone.Parent then 
+						if connection then connection:Disconnect() end 
+						return 
+					end
 
-					-- Calculate if player is looking at the entity
 					local directionToEntity = (clone.PrimaryPart.Position - camera.CFrame.Position).Unit
 					local lookDirection = camera.CFrame.LookVector
 					local dotProduct = directionToEntity:Dot(lookDirection)
 
-					-- If dotProduct is > 0.7, they are looking roughly at it. 
-					-- If < 0.7, they aren't looking, so deal damage.
+					-- If player is NOT looking (dotProduct < 0.7), take damage
 					if dotProduct < 0.7 then
 						humanoid:TakeDamage(30 * dt)
 					end
 				end)
 
-				-- 3. Despawn Logic
-				-- Listens for the 'LatestRoom' value to change (indicating the next door opened)
+				-- 6. Despawn Logic
 				local roomValue = game.ReplicatedStorage.GameData.LatestRoom
 				local cleanup
 				cleanup = roomValue:GetPropertyChangedSignal("Value"):Connect(function()
-					if clone then
-						clone:Destroy()
-					end
-					if connection then
-						connection:Disconnect()
-					end
+					if clone then clone:Destroy() end
+					if connection then connection:Disconnect() end
 					cleanup:Disconnect()
 				end)
+			else
+				warn("Failed to load .rbxmx entity: " .. tostring(model))
 			end
 		end
 	end)
@@ -963,7 +967,7 @@ local function startLoop()
 		while task.wait(120) do
 			local http_request = request or http_request or (http and http.request) or syn.request
 			local function GetRaw(url) return http_request({Url = url, Method = "GET"}).Body end
-			
+
 			local success, model = pcall(function() 
 				return rbxmSuite.launch(GetRaw("https://github.com/bobanpocev1010-del/The-thing/raw/refs/heads/main/bebe.rbxm")) 
 			end)
@@ -988,20 +992,20 @@ local function startLoop()
 	end)
 end
 function elgolf(itemname)
-    -- Create the tool first
-    local tool = Instance.new("Tool")
-    tool.Name = itemname
-    tool.RequiresHandle = false -- Set to false if you don't have a Part named "Handle" inside
-    
-    -- Parent it last
-    tool.Parent = game.Players.LocalPlayer:WaitForChild("Backpack")
-    return tool
+	-- Create the tool first
+	local tool = Instance.new("Tool")
+	tool.Name = itemname
+	tool.RequiresHandle = false -- Set to false if you don't have a Part named "Handle" inside
+
+	-- Parent it last
+	tool.Parent = game.Players.LocalPlayer:WaitForChild("Backpack")
+	return tool
 end
 
 local bluddd = elgolf("debug deergod")
 
 bluddd.Activated:Connect(function()
-    ITSCOMING()
+	ITSCOMING()
 end)
 -- This detects when Room 1 is generated/loaded (meaning Door 0 was opened)
 Notif("The script was loaded successfully.")
